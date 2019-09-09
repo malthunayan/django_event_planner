@@ -1,16 +1,16 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
 <header class="masthead text-center text-white">
 	<div class="masthead-content">
 		<div class="container">
 			<div class="jumbotron">
-				{% for event in events %}
-					<a href="{% url 'detail' event.id %}" style="text-decoration: none; color: white;"><strong class="masthead-subheading mb-0">{{event.title}}</strong>
-					<h4>Organized by: {{event.owner|title}}</h4></a>
-					{% if not forloop.last %}
-						<hr style='background-color:white'>
-					{% endif %}
-				{% endfor %}
+				<h2 class="masthead-subheading mb-0">{{event.title}}</h2>
+					<form action='{% url "purchase" event.id %}' method="POST">
+						{% csrf_token %}
+						{{form|crispy}}
+						<input class="btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Purchase">
+					</form>
 			</div>
 		</div>
 	</div>
@@ -19,4 +19,4 @@
 	<div class="bg-circle-3 bg-circle"></div>
 	<div class="bg-circle-4 bg-circle"></div>
 </header>
-{% endblock %}
+{% endblock content %}
