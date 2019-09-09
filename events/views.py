@@ -114,7 +114,7 @@ def book(request, event_id):
 			book.user = request.user
 			book.event = event
 			if book.tickets <= event.tickets_available:
-				event.tickets_available = event.tickets_available - book.tickets
+				event.tickets_available -= book.tickets
 				event.save()
 				book.save()
 			else:
