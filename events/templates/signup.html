@@ -6,7 +6,7 @@
     <div class="container">
         <div class="jumbotron">
           <h2 class="masthead-subheading mb-0">Sign Up</h2>
-          <form action="{% url 'signup' %}" method="POST">
+          <form action="{% url 'events:signup' %}" method="POST">
             {% csrf_token %}
             {{form|crispy}}
             <input class = "btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Sign Up">

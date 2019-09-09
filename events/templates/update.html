@@ -6,7 +6,7 @@
 		<div class="container">
 			<div class="jumbotron">
 				<strong class="masthead-subheading mb-0">{{event.title}}</strong>
-					<form action='{% url "update" event.id %}' method="POST">
+					<form action='{% url "events:update" event.id %}' method="POST">
 						{% csrf_token %}
 						{{form|crispy}}
 						<input class="btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Update">

@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views import View
 from django.utils import timezone
+from django.db.models import Q
 from .forms import UserSignup, UserLogin, EventUpdateForm, BookingForm, CreateEventForm
 from .models import Event, BookTicket
 
@@ -76,15 +77,15 @@ def dashboard(request):
 	return render(request, 'dashboard.html', context)
 
 def detail(request, event_id):
-	event = Event.objects.get(id=event_id)
-	form = EventUpdateForm(instance=event)
 	if request.user.is_anonymous:
 		return redirect('login')
+	event = Event.objects.get(id=event_id)
+	bookings = BookTicket.objects.filter(event=event)
 	context = {
 		'event': event,
-		'form': form,
 		'start_date': event.occurance.strftime("%b. %d, %Y"),
 		'start_time': event.occurance.strftime("%I:%M %p"),
+		'bookings': bookings,
 	}
 	return render(request, 'detail.html', context)
 
@@ -127,8 +128,16 @@ def book(request, event_id):
 	return render(request, 'book.html', context)
 
 def list(request):
+	events = Event.objects.filter(occurance__gte=timezone.now())
+	query = request.GET.get("q")
+	if query:
+		events = events.filter(
+			Q(title__icontains=query)|
+			Q(content__icontains=query)|
+			Q(owner__username__icontains=query)
+			).distinct()
 	context = {
-		'events': Event.objects.all(),
+		'events': events,
 	}
 	return render(request, 'list.html', context)
 

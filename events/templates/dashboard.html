@@ -18,7 +18,7 @@
 				<tbody>
 					{% for booking in my_upcoming_bookings %}
 						<tr>
-							<td><a href="{% url 'detail' booking.event.id %}">{{forloop.counter}}</a></td>
+							<td><a href="{% url 'events:detail' booking.event.id %}">{{forloop.counter}}</a></td>
 							<td>{{booking.event.title}}</td>
 							<td>{{booking.tickets}}</td>
 							<td>{{booking.event.occurance|date:'M. d, Y'}}</td>
@@ -42,7 +42,7 @@
 				<tbody>
 					{% for booking in my_past_bookings %}
 						<tr>
-							<td><a href="{% url 'detail' booking.event.id %}">{{forloop.counter}}</a></td>
+							<td><a href="{% url 'events:detail' booking.event.id %}">{{forloop.counter}}</a></td>
 							<td>{{booking.event.title}}</td>
 							<td>{{booking.tickets}}</td>
 							<td>{{booking.event.occurance|date:'M. d, Y'}}</td>
@@ -65,7 +65,7 @@
 				<tbody>
 					{% for event in my_events %}
 						<tr>
-							<td><a href="{% url 'detail' event.id %}">{{forloop.counter}}</a></td>
+							<td><a href="{% url 'events:detail' event.id %}">{{forloop.counter}}</a></td>
 							<td>{{event.title}}</td>
 							<td>{{event.occurance|date:'D, d M, Y'}}</td>
 							<td>{{event.occurance|date:'h:i a'}}</td>
@@ -74,7 +74,7 @@
 				</tbody>
 			</table>
 
-			<a href="{% url 'create' %}"><button class="btn btn-primary btn-xl rounded-pill mt-3">Create Event</button></a>
+			<a href="{% url 'events:create' %}"><button class="btn btn-primary btn-xl rounded-pill mt-3">Create An Event</button></a>
 
 		</div>
 	</div>
