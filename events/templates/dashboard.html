@@ -10,19 +10,19 @@
 					<tr>
 						<th>#</th>
 						<th>Event Name</th>
-						<th>Tickets</th>
-						<th>Date</th>
-						<th>Time</th>
+						<th>Tickets Purchased</th>
+						<th>Event Date</th>
+						<th>Purchase Date</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for booking in my_upcoming_bookings %}
 						<tr>
-							<td>{{forloop.counter}}</td>
+							<td><a href="{% url 'detail' booking.event.id %}">{{forloop.counter}}</a></td>
 							<td>{{booking.event.title}}</td>
 							<td>{{booking.tickets}}</td>
-							<td>{{booking.event.occurance|date:'D, d M, Y'}}</td>
-							<td>{{booking.event.occurance|date:'h:i a'}}</td>
+							<td>{{booking.event.occurance|date:'M. d, Y'}}</td>
+							<td>{{booking.purchase_date|date:'M. d, Y'}}</td>
 						</tr>
 					{% endfor %}
 				</tbody>
@@ -34,7 +34,7 @@
 					<tr>
 						<th>#</th>
 						<th>Event Name</th>
-						<th>Tickets</th>
+						<th>Tickets Purchased</th>
 						<th>Event Date</th>
 						<th>Purchase Date</th>
 					</tr>
@@ -65,7 +65,7 @@
 				<tbody>
 					{% for event in my_events %}
 						<tr>
-							<td>{{forloop.counter}}</td>
+							<td><a href="{% url 'detail' event.id %}">{{forloop.counter}}</a></td>
 							<td>{{event.title}}</td>
 							<td>{{event.occurance|date:'D, d M, Y'}}</td>
 							<td>{{event.occurance|date:'h:i a'}}</td>
@@ -73,6 +73,8 @@
 					{% endfor %}
 				</tbody>
 			</table>
+
+			<a href="{% url 'create' %}"><button class="btn btn-primary btn-xl rounded-pill mt-3">Create Event</button></a>
 
 		</div>
 	</div>

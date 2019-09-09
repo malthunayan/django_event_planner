@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views import View
 from django.utils import timezone
-from .forms import UserSignup, UserLogin, EventUpdateForm, BookingForm
+from .forms import UserSignup, UserLogin, EventUpdateForm, BookingForm, CreateEventForm
 from .models import Event, BookTicket
 
 def home(request):
@@ -65,8 +65,8 @@ class Logout(View):
 def dashboard(request):
 	if request.user.is_anonymous:
 		return redirect('login')
-	my_upcoming_bookings = BookTicket.objects.filter(user=request.user)
-	my_past_bookings = BookTicket.objects.filter(user=request.user)
+	my_upcoming_bookings = BookTicket.objects.filter(user=request.user, event__occurance__gte=timezone.now())
+	my_past_bookings = BookTicket.objects.filter(user=request.user, event__occurance__lt=timezone.now())
 	my_events = Event.objects.filter(owner=request.user)
 	context = {
 		'my_upcoming_bookings': my_upcoming_bookings,
@@ -80,15 +80,6 @@ def detail(request, event_id):
 	form = EventUpdateForm(instance=event)
 	if request.user.is_anonymous:
 		return redirect('login')
-	elif not (request.user.is_staff or request.user == event.owner):
-		return render(request, 'detail.html', {'event': event})
-	else:
-		if request.method == 'POST':
-			form = EventUpdateForm(request.POST, instance=event)
-			if form.is_valid():
-				form.save()
-				messages.success(request, "You have successfully updated the event.")
-				return redirect('detail')
 	context = {
 		'event': event,
 		'form': form,
@@ -96,6 +87,21 @@ def detail(request, event_id):
 		'start_time': event.occurance.strftime("%I:%M %p"),
 	}
 	return render(request, 'detail.html', context)
+
+def update(request, event_id):
+	event = Event.objects.get(id=event_id)
+	form = EventUpdateForm(instance=event)
+	if request.method == 'POST':
+		form = EventUpdateForm(request.POST, instance=event)
+		if form.is_valid():
+			form.save()
+			messages.success(request, "You have successfully updated the event.")
+			return redirect(event)
+	context = {
+		'event': event,
+		'form': form,
+	}
+	return render(request, 'update.html', context)
 
 def book(request, event_id):
 	event = Event.objects.get(id=event_id)
@@ -111,7 +117,7 @@ def book(request, event_id):
 				event.save()
 				book.save()
 			else:
-				messages.warning(request, "You have exceeded the number of tickets available.")
+				messages.warning(request, "You have exceeded the maximum number of tickets available.")
 				return redirect(book)
 			return redirect(book.event)
 	context = {
@@ -125,3 +131,19 @@ def list(request):
 		'events': Event.objects.all(),
 	}
 	return render(request, 'list.html', context)
+
+def create(request):
+	if request.user.is_anonymous:
+		return redirect("login")
+	form = CreateEventForm()
+	if request.method == "POST":
+		form = CreateEventForm(request.POST, request.FILES)
+		if form.is_valid():
+			event = form.save(commit=False)
+			event.owner = request.user
+			event.save()
+			return redirect("list")
+	context = {
+		"form": form,
+	}
+	return render(request, "create.html", context)
