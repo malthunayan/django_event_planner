@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Event, BookTicket
+from .models import Event, BookTicket, UserProfile
 
 class UserSignup(forms.ModelForm):
 	class Meta:
@@ -36,3 +36,13 @@ class CreateEventForm(forms.ModelForm):
 	class Meta:
 		model = Event
 		exclude = ['owner',]
+
+class EditProfileForm(forms.ModelForm):
+	class Meta:
+		model = UserProfile
+		fields = ['avatar']
+
+class EditUserForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = fields = ['username', 'first_name', 'last_name', 'email']

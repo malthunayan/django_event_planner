@@ -4,8 +4,9 @@ from django.contrib import messages
 from django.views import View
 from django.utils import timezone
 from django.db.models import Q
-from .forms import UserSignup, UserLogin, EventUpdateForm, BookingForm, CreateEventForm
-from .models import Event, BookTicket
+from .forms import (UserSignup, UserLogin, EventUpdateForm, BookingForm,
+	CreateEventForm, EditProfileForm, EditUserForm)
+from .models import Event, BookTicket, UserProfile
 
 def home(request):
 	return render(request, 'home.html')
@@ -26,9 +27,9 @@ class Signup(View):
 			user.save()
 			messages.success(request, "You have successfully signed up.")
 			login(request, user)
-			return redirect("home")
+			return redirect("events:home")
 		messages.warning(request, form.errors)
-		return redirect("signup")
+		return redirect("events:signup")
 
 
 class Login(View):
@@ -50,22 +51,22 @@ class Login(View):
 			if auth_user is not None:
 				login(request, auth_user)
 				messages.success(request, "Welcome Back!")
-				return redirect('dashboard')
+				return redirect('events:dashboard')
 			messages.warning(request, "Wrong email/password combination. Please try again.")
-			return redirect("login")
+			return redirect("events:login")
 		messages.warning(request, form.errors)
-		return redirect("login")
+		return redirect("events:login")
 
 
 class Logout(View):
 	def get(self, request, *args, **kwargs):
 		logout(request)
 		messages.success(request, "You have successfully logged out.")
-		return redirect("login")
+		return redirect("events:login")
 
 def dashboard(request):
 	if request.user.is_anonymous:
-		return redirect('login')
+		return redirect('events:login')
 	my_upcoming_bookings = BookTicket.objects.filter(user=request.user, event__occurance__gte=timezone.now())
 	my_past_bookings = BookTicket.objects.filter(user=request.user, event__occurance__lt=timezone.now())
 	my_events = Event.objects.filter(owner=request.user)
@@ -78,7 +79,7 @@ def dashboard(request):
 
 def detail(request, event_id):
 	if request.user.is_anonymous:
-		return redirect('login')
+		return redirect('events:login')
 	event = Event.objects.get(id=event_id)
 	bookings = BookTicket.objects.filter(event=event)
 	context = {
@@ -103,6 +104,31 @@ def update(request, event_id):
 		'form': form,
 	}
 	return render(request, 'update.html', context)
+
+def edit_profile(request):
+	if request.user.is_anonymous:
+		return redirect('events:login')
+	profile = UserProfile.objects.get(user=request.user)
+	profile_form = EditProfileForm(instance=profile)
+	user_form = EditUserForm(instance=request.user)
+	if request.method == 'POST':
+		profile_form = EditProfileForm(request.POST, request.FILES, instance=profile)
+		user_form = EditUserForm(request.POST, instance=request.user)
+		if profile_form.is_valid() and user_form.is_valid():
+			profile_form.save()
+			user_form.save()
+			messages.success(request, "You have successfully updated your profile.")
+			return redirect('events:edit-profile')
+	context = {
+		'profile_form': profile_form,
+		'user_form': user_form,
+	}
+	return render(request, 'edit_profile.html', context)
+
+def profile(request):
+	if request.user.is_anonymous:
+		return redirect('events:login')
+	return render(request, 'profile.html')
 
 def book(request, event_id):
 	event = Event.objects.get(id=event_id)
@@ -143,7 +169,7 @@ def list(request):
 
 def create(request):
 	if request.user.is_anonymous:
-		return redirect("login")
+		return redirect("events:login")
 	form = CreateEventForm()
 	if request.method == "POST":
 		form = CreateEventForm(request.POST, request.FILES)
@@ -151,7 +177,7 @@ def create(request):
 			event = form.save(commit=False)
 			event.owner = request.user
 			event.save()
-			return redirect("list")
+			return redirect("events:list")
 	context = {
 		"form": form,
 	}

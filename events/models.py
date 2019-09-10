@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
+from django.db.models.signals import post_save
 
 
 class Event(models.Model):
@@ -26,3 +27,17 @@ class BookTicket(models.Model):
 
 	def get_absolute_url(self):
 		return reverse('purchase', kwargs={'event_id':self.event.id})
+
+class UserProfile(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	avatar = models.ImageField(blank=True, null=True)
+
+	def __str__(self):
+		return self.user.username
+
+def create_profile(sender, instance, created, **kwargs):
+	if created:
+		user_profile = UserProfile.objects.create(user=instance)
+
+post_save.connect(create_profile, sender=User)
+

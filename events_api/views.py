@@ -15,10 +15,17 @@ class List(ListAPIView):
 
 class MyEvents(ListAPIView):
 	serializer_class = MyEventsListSerializer
-	permission_classes = [IsAuthenticated]
+	permission_classes = [IsAuthenticated, IsEventOwner]
 
 	def get_queryset(self):
 		return Event.objects.filter(owner=self.request.user, occurance__gte=timezone.now())
+
+class OtherEvents(ListAPIView):
+	serializer_class = EventListSerializer
+	permission_classes = [IsAuthenticated]
+
+	def get_queryset(self):
+		return Event.objects.filter(owner__id=self.kwargs['owner_id'])
 
 class MyBookings(ListAPIView):
 	serializer_class = BookListSerializer
