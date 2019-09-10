@@ -118,7 +118,7 @@ def edit_profile(request):
 			profile_form.save()
 			user_form.save()
 			messages.success(request, "You have successfully updated your profile.")
-			return redirect('events:edit-profile')
+			return redirect('events:profile')
 	context = {
 		'profile_form': profile_form,
 		'user_form': user_form,
