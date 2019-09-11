@@ -1,0 +1,22 @@
+<table class="table table-dark mb-3">
+	<thead>
+		<tr>
+			<th>Event Name</th>
+			<th>Tickets Purchased</th>
+			<th>Event Date</th>
+			<th>Purchase Date</th>
+			<th>View</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for booking in bookings %}
+			<tr>
+				<td>{{booking.event.title|title}}</td>
+				<td>{{booking.tickets}}</td>
+				<td>{{booking.event.occurance|date:'M. d, Y'}}</td>
+				<td>{{booking.purchase_date|date:'M. d, Y'}}</td>
+				<td><a href="{% url 'events:detail' booking.event.id %}" class="btn btn-secondary btn-sm">View</a></td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

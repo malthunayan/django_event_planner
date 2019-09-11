@@ -3,6 +3,7 @@ from events.models import Event, BookTicket
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+
 class AttendeesSerializer(serializers.ModelSerializer):
 	user = serializers.SlugRelatedField(
 			slug_field = 'username',
@@ -14,24 +15,23 @@ class AttendeesSerializer(serializers.ModelSerializer):
 
 
 class MyEventsListSerializer(serializers.ModelSerializer):
-	attendees = serializers.SerializerMethodField()
+	bookings = AttendeesSerializer(many=True)
 	class Meta:
 		model = Event
-		fields = ['title', 'occurance', 'attendees']
+		fields = ['title', 'occurance', 'bookings', ]
 
-	def get_attendees(self, obj):
-		attendees = BookTicket.objects.filter(event=obj)
-		return AttendeesSerializer(attendees, many=True).data
 
 class EventListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Event
 		fields = ['title', 'occurance']
 
+
 class BookListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = BookTicket
 		exclude = ['user', 'id']
+
 
 class BookEventSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -47,6 +47,7 @@ class BookEventSerializer(serializers.ModelSerializer):
 		else:
 			raise ValidationError('You have exceeded the maximum number of available tickets.')
 		return validated_data
+
 
 class RegisterSerializer(serializers.ModelSerializer):
 	password = serializers.CharField(write_only=True)
@@ -64,7 +65,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 		new_user.save()
 		return validated_data
 
+
 class CreateEventSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Event
 		exclude = ['owner', 'created_on']
+

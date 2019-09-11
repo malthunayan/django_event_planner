@@ -37,11 +37,6 @@ class MyBookings(ListAPIView):
 class Register(CreateAPIView):
 	serializer_class = RegisterSerializer
 
-	# def perform_create(self, serializer):
-	# 	queryset = SignupRequest.objects.filter(user=self.request.user)
-	# 	if queryset.exist():
-	# 		raise ValidationError('You have already signed up')
-	# 	serializer.save(user=self.request.user)
 
 class CreateEvent(CreateAPIView):
 	serializer_class = CreateEventSerializer
@@ -63,3 +58,10 @@ class BookEvent(CreateAPIView):
 
 	def perform_create(self, serializer):
 		serializer.save(user=self.request.user)
+
+
+# class BookEvent(APIView):
+# 	permission_classes = [IsAuthenticated]
+
+# 	def post(self, request, event_id, *args, **kwargs):
+# 		tickets = request.data.get('tickets')

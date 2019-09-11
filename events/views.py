@@ -67,9 +67,11 @@ class Logout(View):
 def dashboard(request):
 	if request.user.is_anonymous:
 		return redirect('events:login')
-	my_upcoming_bookings = BookTicket.objects.filter(user=request.user, event__occurance__gte=timezone.now())
-	my_past_bookings = BookTicket.objects.filter(user=request.user, event__occurance__lt=timezone.now())
-	my_events = Event.objects.filter(owner=request.user)
+
+	user = request.user
+	my_upcoming_bookings = user.attended.filter(event__occurance__gte=timezone.now())
+	my_past_bookings = user.attended.filter(event__occurance__lt=timezone.now())
+	my_events = user.events.all()
 	context = {
 		'my_upcoming_bookings': my_upcoming_bookings,
 		'my_past_bookings': my_past_bookings,
@@ -80,6 +82,7 @@ def dashboard(request):
 def detail(request, event_id):
 	if request.user.is_anonymous:
 		return redirect('events:login')
+
 	event = Event.objects.get(id=event_id)
 	bookings = BookTicket.objects.filter(event=event)
 	context = {
@@ -105,31 +108,32 @@ def update(request, event_id):
 	}
 	return render(request, 'update.html', context)
 
-def edit_profile(request):
-	if request.user.is_anonymous:
-		return redirect('events:login')
-	profile = UserProfile.objects.get(user=request.user)
-	profile_form = EditProfileForm(instance=profile)
-	user_form = EditUserForm(instance=request.user)
-	if request.method == 'POST':
-		profile_form = EditProfileForm(request.POST, request.FILES, instance=profile)
-		user_form = EditUserForm(request.POST, instance=request.user)
-		if profile_form.is_valid() and user_form.is_valid():
-			profile_form.save()
-			user_form.save()
-			messages.success(request, "You have successfully updated your profile.")
-			return redirect('events:profile')
-	context = {
-		'profile_form': profile_form,
-		'user_form': user_form,
-	}
-	return render(request, 'edit_profile.html', context)
+# def edit_profile(request):
+# 	if request.user.is_anonymous:
+# 		return redirect('events:login')
+
+# 	user = request.user
+# 	profile_form = EditProfileForm(instance=user.userprofile)
+# 	user_form = EditUserForm(instance=user)
+# 	if request.method == 'POST':
+# 		profile_form = EditProfileForm(request.POST, request.FILES, instance=user.userprofile)
+# 		user_form = EditUserForm(request.POST, instance=user)
+# 		if profile_form.is_valid() and user_form.is_valid():
+# 			profile_form.save()
+# 			user_form.save()
+# 			messages.success(request, "You have successfully updated your profile.")
+# 			return redirect('events:profile')
+# 	context = {
+# 		'profile_form': profile_form,
+# 		'user_form': user_form,
+# 	}
+# 	return render(request, 'edit_profile.html', context)
 
 def profile(request):
 	if request.user.is_anonymous:
 		return redirect('events:login')
 	context = {
-		'user': UserProfile.objects.get(user=request.user)
+		'user': request.user.userprofile
 	}
 	return render(request, 'profile.html', context)
 
@@ -144,6 +148,10 @@ def book(request, event_id):
 			book.event = event
 			if book.tickets <= event.tickets_available:
 				event.tickets_available -= book.tickets
+				print('hi')
+				print(event.tickets_booked())
+				print(event.tickets_left())
+				print('hi2')
 				event.save()
 				book.save()
 			else:
@@ -185,3 +193,24 @@ def create(request):
 		"form": form,
 	}
 	return render(request, "create.html", context)
+
+def edit_profile(request):
+	if request.user.is_anonymous:
+		return redirect('events:login')
+	user = request.user
+	profile_form = EditProfileForm(instance=user.userprofile)
+	user_form = EditUserForm(instance=user)
+	if request.method == 'POST':
+		profile_form = EditProfileForm(request.POST, request.FILES, instance=user.userprofile)
+		user_form = EditUserForm(request.POST, instance=user)
+		if profile_form.is_valid() and user_form.is_valid():
+			profile_form.save()
+			user_form.save()
+			messages.success(request, "You have successfully updated your profile.")
+			return redirect('events:edit-profile')
+	context = {
+		'profile_form': profile_form,
+		'user_form': user_form,
+		'user': user,
+	}
+	return render(request, 'edit_profile.html')

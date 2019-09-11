@@ -5,7 +5,7 @@
 		<div class="container">
 			<div class="jumbotron">
 				<form action="{% url 'events:list' %}" method="GET">
-					<input class="form-control-sm" type="text" name='q' placeholder="Event title, content, or organizer..." value="{{request.GET.q}}">
+					<input class="form-control" type="text" name='q' placeholder="Event title, content, or organizer..." value="{{request.GET.q}}">
 					<input type="submit" class="btn btn-primary btn-sm" value="Search">
 				</form>
 				{% for event in events %}

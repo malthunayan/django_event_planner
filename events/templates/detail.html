@@ -45,7 +45,7 @@
 										{% if booking.user.first_name %}
 											{{booking.user.first_name|title}} {{booking.user.last_name|title}}
 										{% else %}
-											{% firstof booking.user.first_name|title booking.user.last_name|title booking.user|title %}
+											{% firstof booking.user.last_name|title booking.user|title %}
 										{% endif %}
 									</td>
 									<td>{{booking.tickets}}</td>

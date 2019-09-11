@@ -1,14 +1,15 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Event, BookTicket, UserProfile
+from django.contrib.admin.widgets import AdminDateWidget
 
 class UserSignup(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = ['username', 'first_name', 'last_name', 'email' ,'password']
 
-		widgets={
-		'password': forms.PasswordInput(),
+		widgets = {
+			'password': forms.PasswordInput(),
 		}
 
 
@@ -19,30 +20,30 @@ class UserLogin(forms.Form):
 class EventUpdateForm(forms.ModelForm):
 	class Meta:
 		model = Event
-		exclude = ['created_on', 'tickets']
+		exclude = ['created_on',]
 
-	# def clean(self):
-	# 	tickets = self.cleaned_data.get('tickets')
-	# 	if tickets and tickets.count() > maximum_number_of_tickets:
-	# 		raise ValidationError('Must be less than %s'%(maximum_number_of_tickets-tickets))
-	# 	return self.cleaned_data
 
 class BookingForm(forms.ModelForm):
 	class Meta:
 		model = BookTicket
 		fields = ['tickets']
 
+
 class CreateEventForm(forms.ModelForm):
 	class Meta:
 		model = Event
 		exclude = ['owner',]
 
+
 class EditProfileForm(forms.ModelForm):
+	# bio = forms.CharField(required=False)
 	class Meta:
 		model = UserProfile
-		fields = ['avatar']
+		exclude = ['user',]
+
 
 class EditUserForm(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = fields = ['username', 'first_name', 'last_name', 'email']
+
