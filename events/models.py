@@ -31,6 +31,7 @@ class BookTicket(models.Model):
 class UserProfile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	avatar = models.ImageField(blank=True, null=True)
+	bio = models.CharField(max_length=270, default='', null=True)
 
 	def __str__(self):
 		return self.user.username

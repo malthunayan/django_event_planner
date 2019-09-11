@@ -128,7 +128,10 @@ def edit_profile(request):
 def profile(request):
 	if request.user.is_anonymous:
 		return redirect('events:login')
-	return render(request, 'profile.html')
+	context = {
+		'user': UserProfile.objects.get(user=request.user)
+	}
+	return render(request, 'profile.html', context)
 
 def book(request, event_id):
 	event = Event.objects.get(id=event_id)
