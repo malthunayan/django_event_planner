@@ -10,30 +10,6 @@
 			<h6 class="text-left">Past Events:</h6>
 			{% include "event_table.html" with bookings=my_past_bookings %}
 			
-			<h6 class="text-left">My Events:</h6>
-			<table class="table table-dark mb-3">
-				<thead>
-					<tr>
-						<th>Event Name</th>
-						<th>Date</th>
-						<th>Time</th>
-						<th>View</th>
-						<th>Update</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for event in my_events %}
-						<tr>
-							<td>{{event.title|title}}</td>
-							<td>{{event.occurance|date:'D, d M, Y'}}</td>
-							<td>{{event.occurance|date:'h:i a'}}</td>
-							<td><a href="{% url 'events:detail' event.id %}" class="btn btn-secondary btn-sm">View</a></td>
-							<td><a href="{% url 'events:update' event.id %}"><button class="btn btn-info btn-sm">Update</button></a></td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-
 			<a href="{% url 'events:create' %}"><button class="btn btn-primary btn-xl rounded-pill mt-3">Create An Event</button></a>
 
 		</div>

@@ -71,11 +71,10 @@ def dashboard(request):
 	user = request.user
 	my_upcoming_bookings = user.attended.filter(event__occurance__gte=timezone.now())
 	my_past_bookings = user.attended.filter(event__occurance__lt=timezone.now())
-	my_events = user.events.all()
 	context = {
 		'my_upcoming_bookings': my_upcoming_bookings,
 		'my_past_bookings': my_past_bookings,
-		'my_events': my_events,
+
 	}
 	return render(request, 'dashboard.html', context)
 
@@ -104,21 +103,24 @@ def update(request, event_id):
 	}
 	return render(request, 'update.html', context)
 
+# def profile(request):
+# 	if request.user.is_anonymous:
+# 		return redirect('events:login')
+# 	context = {
+# 		'user': request.user.userprofile
+# 	}
+# 	return render(request, 'profile.html', context)
+
 def profile(request):
 	if request.user.is_anonymous:
 		return redirect('events:login')
+	user = request.user
+	my_events = user.events.all()
 	context = {
-		'user': request.user.userprofile
+		'user': user,
+		'my_events': my_events,
 	}
 	return render(request, 'profile.html', context)
-
-def test(request):
-	if request.user.is_anonymous:
-		return redirect('events:login')
-	context = {
-		'user': request.user
-	}
-	return render(request, 'test.html', context)
 
 
 def book(request, event_id):
