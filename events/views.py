@@ -82,14 +82,10 @@ def dashboard(request):
 def detail(request, event_id):
 	if request.user.is_anonymous:
 		return redirect('events:login')
-
 	event = Event.objects.get(id=event_id)
-	bookings = BookTicket.objects.filter(event=event)
 	context = {
 		'event': event,
-		'start_date': event.occurance.strftime("%b. %d, %Y"),
-		'start_time': event.occurance.strftime("%I:%M %p"),
-		'bookings': bookings,
+		'bookings': event.bookings.all(),
 	}
 	return render(request, 'detail.html', context)
 
@@ -108,27 +104,6 @@ def update(request, event_id):
 	}
 	return render(request, 'update.html', context)
 
-# def edit_profile(request):
-# 	if request.user.is_anonymous:
-# 		return redirect('events:login')
-
-# 	user = request.user
-# 	profile_form = EditProfileForm(instance=user.userprofile)
-# 	user_form = EditUserForm(instance=user)
-# 	if request.method == 'POST':
-# 		profile_form = EditProfileForm(request.POST, request.FILES, instance=user.userprofile)
-# 		user_form = EditUserForm(request.POST, instance=user)
-# 		if profile_form.is_valid() and user_form.is_valid():
-# 			profile_form.save()
-# 			user_form.save()
-# 			messages.success(request, "You have successfully updated your profile.")
-# 			return redirect('events:profile')
-# 	context = {
-# 		'profile_form': profile_form,
-# 		'user_form': user_form,
-# 	}
-# 	return render(request, 'edit_profile.html', context)
-
 def profile(request):
 	if request.user.is_anonymous:
 		return redirect('events:login')
@@ -144,19 +119,12 @@ def book(request, event_id):
 		form = BookingForm(request.POST)
 		if form.is_valid():
 			book=form.save(commit=False)
+			if event.full():
+				messages.warning(request, "You have exceeded the maximum number of tickets available.")
+				return redirect("events:list")
 			book.user = request.user
 			book.event = event
-			if book.tickets <= event.tickets_available:
-				event.tickets_available -= book.tickets
-				print('hi')
-				print(event.tickets_booked())
-				print(event.tickets_left())
-				print('hi2')
-				event.save()
-				book.save()
-			else:
-				messages.warning(request, "You have exceeded the maximum number of tickets available.")
-				return redirect(book)
+			book.save()
 			return redirect(book.event)
 	context = {
 		'event': event,
@@ -214,3 +182,7 @@ def edit_profile(request):
 		'user': user,
 	}
 	return render(request, 'edit_profile.html')
+
+def cancel_booking(request, booking_id):
+	BookTicket.objects.filter(event__occurance__gte=timezone.now()).get(id=booking_id).delete()
+	return redirect("events:dashboard")

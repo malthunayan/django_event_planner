@@ -6,6 +6,9 @@
 			<th>Event Date</th>
 			<th>Purchase Date</th>
 			<th>View</th>
+			{% if bookings == my_upcoming_bookings %}
+				<th>Cancel Booking</th>
+			{% endif %}
 		</tr>
 	</thead>
 	<tbody>
@@ -16,6 +19,9 @@
 				<td>{{booking.event.occurance|date:'M. d, Y'}}</td>
 				<td>{{booking.purchase_date|date:'M. d, Y'}}</td>
 				<td><a href="{% url 'events:detail' booking.event.id %}" class="btn btn-secondary btn-sm">View</a></td>
+				{% if bookings == my_upcoming_bookings %}
+					<td><a href="{% url 'events:cancel-booking' booking.id %}" class="btn btn-danger btn-sm">Cancel</a></td>
+				{% endif %}
 			</tr>
 		{% endfor %}
 	</tbody>

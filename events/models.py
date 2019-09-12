@@ -20,10 +20,10 @@ class Event(models.Model):
 		return reverse('events:detail', kwargs={'event_id':self.id})
 
 	def tickets_booked(self):
-		num_tickets = self.bookings.all()
+		bookings = self.bookings.all()
 		total = 0
-		for num in num_tickets:
-			total+=1
+		for booking in bookings:
+			total+=booking.tickets
 		return total
 
 	def tickets_left(self):
@@ -40,7 +40,7 @@ class BookTicket(models.Model):
 	purchase_date = models.DateTimeField(auto_now_add=True)
 
 	def get_absolute_url(self):
-		return reverse('purchase', kwargs={'event_id':self.event.id})
+		return reverse('purchase', kwargs={'booking_id':self.id})
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
