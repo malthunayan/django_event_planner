@@ -112,6 +112,15 @@ def profile(request):
 	}
 	return render(request, 'profile.html', context)
 
+def test(request):
+	if request.user.is_anonymous:
+		return redirect('events:login')
+	context = {
+		'user': request.user
+	}
+	return render(request, 'test.html', context)
+
+
 def book(request, event_id):
 	event = Event.objects.get(id=event_id)
 	form = BookingForm()
@@ -119,13 +128,13 @@ def book(request, event_id):
 		form = BookingForm(request.POST)
 		if form.is_valid():
 			book=form.save(commit=False)
-			if event.full():
+			if book.tickets > event.tickets_left():
 				messages.warning(request, "You have exceeded the maximum number of tickets available.")
-				return redirect("events:list")
-			book.user = request.user
-			book.event = event
-			book.save()
-			return redirect(book.event)
+			else:
+				book.user = request.user
+				book.event = event
+				book.save()
+				return redirect(book.event)
 	context = {
 		'event': event,
 		'form': form,

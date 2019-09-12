@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="masthead">
+	<div class="masthead-content">
+		<div class="container">
+
+
+			<div class="col">
+				<div class="row">
+					<div class="col mb-3">
+						<div class="card">
+							<div class="card-body">
+								<div class="e-profile">
+									<div class="row">
+										<div class="col-12 col-sm-auto mb-3">
+											{% if user.userprofile.avatar %}
+												<div class="mx-auto" style="width: 140px;">
+													<div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; background-color: rgb(233, 236, 239);">
+														<img src="{{user.userprofile.avatar.url}}" style="width:140px; height:140px; display:block; object-fit: cover">
+													</div>
+												</div>
+											{% else %}
+												<div class="mx-auto" style="width: 140px;">
+														<div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; background-color: rgb(233, 236, 239);">
+															<span style="color: rgb(166, 168, 170); font: bold 8pt Arial;">Add an image</span>
+														</div>
+												</div>
+											{% endif %}
+										</div>
+										<div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+											<div class="text-center text-sm-left mb-2 mb-sm-0">
+												<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{user.get_full_name|title}}</h4>
+												<p class="mb-0">@{{user}}</p>
+												<div class="text-muted"><small>Last login {{user.last_login|timesince}} ago</small></div>
+											</div>
+											<div class="text-center text-sm-right">
+												{% if user.is_superuser %}
+													<span class="badge badge-secondary">administrator</span>
+												{% endif %}
+												<div class="text-muted"><small>Joined {{user.date_joined|date:'d M Y'}}</small></div>
+											</div>
+										</div>
+									</div>
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a href="{% url 'events:test' %}" class="active nav-link mr-1">Profile</a></li>
+										<li class="nav-item"><a href="{% url 'events:edit-profile' %}" class="active nav-link mr-1">Settings</a></li>
+									</ul>
+									<div class="tab-content pt-3">
+										<div class="tab-pane active">
+										
+												<div class="row">
+													<div class="col">
+														<div class="row">
+															<div class="col mb-3">
+																<div class="form-group">
+																	<label>About</label>
+																	<p>{{user.userprofile.bio}}</p>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row flex-lg-nowrap">
+						<div class="col-12 col-lg-auto mb-3" style="width: 200px;">
+							<div class="card p-3 mb-3">
+								<div class="e-navlist e-navlist--active-bg">
+									<ul class="nav">
+										<li class="nav-item"><a class="nav-link px-2 active" href="{% url 'events:dashboard' %}"><i class="fa fa-fw fa-bar-chart mr-1"></i><span>Dashboard</span></a></li>
+										<li class="nav-item"><a class="nav-link px-2" href="{% url 'events:profile' %}"><i class="fa fa-fw fa-th mr-1"></i><span>Profile</span></a></li>
+										<li class="nav-item"><a class="nav-link px-2" href="{% url 'events:edit-profile' %}"><i class="fa fa-fw fa-cog mr-1"></i><span>Settings</span></a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="row flex-lg-nowrap">
+								<div class="col-12 col-lg-auto mb-3" style="width: 200px;">
+									<div class="card mb-3">
+										<div class="card-body">
+											<h6 class="card-title font-weight-bold">Support</h6>
+											<p class="card-text">Get fast, free help from our friendly assistants.</p>
+											<button type="button" class="btn btn-primary">Contact Us</button>
+										</div>
+									</div>
+									<div class="card">
+										<div class="card-body">
+											<div class="px-xl-3">
+												<button class="btn btn-block btn-secondary">
+													<i class="fa fa-sign-out"></i>
+													<a href="{% url 'events:logout' %}" class="text-white">Logout</a>
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="bg-circle-1 bg-circle"></div>
+	<div class="bg-circle-2 bg-circle"></div>
+	<div class="bg-circle-3 bg-circle"></div>
+	<div class="bg-circle-4 bg-circle"></div>
+</header>
+{% endblock content %}

@@ -4,9 +4,17 @@
 	<div class="masthead-content">
 		<div class="container">
 			<div class="jumbotron">
-				<img src="{{ user.avatar.url }}">
+				{% if user.avatar %}
+					<img src="{{ user.avatar.url }}">
+				{% else %}
+					<div class="mx-auto" style="width: 200px;">
+						<div class="d-flex justify-content-center align-items-center rounded" style="height: 200px; background-color: rgb(233, 236, 239);">
+							<span style="color: rgb(166, 168, 170); font: bold 8pt Arial;">200x200</span>
+						</div>
+					</div>
+				{% endif %}
 				<br>
-				<strong class="masthead-subheading mb-0">{{ request.user }}</strong>
+				<strong class="masthead-subheading mb-0">{{user.get_full_name|title}}</strong>
 			</div>
 		</div>
 	</div>

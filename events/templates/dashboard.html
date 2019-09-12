@@ -18,6 +18,7 @@
 						<th>Date</th>
 						<th>Time</th>
 						<th>View</th>
+						<th>Update</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -27,6 +28,7 @@
 							<td>{{event.occurance|date:'D, d M, Y'}}</td>
 							<td>{{event.occurance|date:'h:i a'}}</td>
 							<td><a href="{% url 'events:detail' event.id %}" class="btn btn-secondary btn-sm">View</a></td>
+							<td><a href="{% url 'events:update' event.id %}"><button class="btn btn-info btn-sm">Update</button></a></td>
 						</tr>
 					{% endfor %}
 				</tbody>

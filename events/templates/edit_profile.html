@@ -51,7 +51,8 @@
 								</div>
 							</div>
 							<ul class="nav nav-tabs">
-								<li class="nav-item"><a href="" class="active nav-link">Settings</a></li>
+								<li class="nav-item"><a href="{% url 'events:test' %}" class="active nav-link mr-1">Profile</a></li>
+								<li class="nav-item"><a href="{% url 'events:edit-profile' %}" class="active nav-link mr-1">Settings</a></li>
 							</ul>
 							<div class="tab-content pt-3">
 								<div class="tab-pane active">
@@ -93,7 +94,7 @@
 													<div class="col mb-3">
 														<div class="form-group">
 															<label>About</label>
-															<textarea class="form-control" name="bio" rows="5" placeholder="{% firstof user.userprofile.bio 'My Bio' %}" value="{{user.userprofile.bio}}"></textarea>
+															<textarea class="form-control" name="bio" rows="5" placeholder="{% firstof user.userprofile.bio 'My Bio' %}">{{user.userprofile.bio}}</textarea>
 														</div>
 													</div>
 												</div>

@@ -21,16 +21,18 @@ class Event(models.Model):
 
 	def tickets_booked(self):
 		bookings = self.bookings.all()
+		print(bookings)
 		total = 0
 		for booking in bookings:
 			total+=booking.tickets
+		print(total)
 		return total
 
 	def tickets_left(self):
 		return self.tickets_available - self.tickets_booked()
 
 	def full(self):
-		return self.tickets_left() == 0
+		return self.tickets_left() <= 0
 
 
 class BookTicket(models.Model):
@@ -41,6 +43,9 @@ class BookTicket(models.Model):
 
 	def get_absolute_url(self):
 		return reverse('purchase', kwargs={'booking_id':self.id})
+
+	def __str__(self):
+		return ("%d tickets at the %s event for %s"%(self.tickets,self.event.title,self.user.username))
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)

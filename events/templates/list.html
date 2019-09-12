@@ -5,12 +5,16 @@
 		<div class="container">
 			<div class="jumbotron">
 				<form action="{% url 'events:list' %}" method="GET">
-					<input class="form-control" type="text" name='q' placeholder="Event title, content, or organizer..." value="{{request.GET.q}}">
-					<input type="submit" class="btn btn-primary btn-sm" value="Search">
+					<div class="input-group mb-4">
+						<input class="form-control" type="text" name='q' placeholder="Event title, content, or organizer..." value="{{request.GET.q}}">
+						<div class="input-group-append">
+							<button class="btn btn-secondary" type="button" id="button-addon2">Search</button>
+						</div>
+					</div>
 				</form>
 				{% for event in events %}
-					<a href="{% url 'events:detail' event.id %}" style="text-decoration: none; color: white;"><strong class="masthead-subheading mb-0">{{event.title}}</strong>
-					<h4>Organized by: {{event.owner|title}}</h4></a>
+					<a href="{% url 'events:detail' event.id %}" style="text-decoration: none; color: white;"><strong class="masthead-subheading mb-0">{{event.title|title}}</strong>
+					<h4>Organized by: {{event.owner.get_full_name|title}}</h4></a>
 					{% if not forloop.last %}
 						<hr style='background-color:white'>
 					{% endif %}
@@ -24,3 +28,12 @@
 	<div class="bg-circle-4 bg-circle"></div>
 </header>
 {% endblock %}
+
+<form action="{% url 'events:list' %}" method="GET">
+	<div class="input-group mb-3">
+		<input type="text" class="form-control" value="{{request.GET.q}}" name="q" placeholder="Event title, content, or organizer..." aria-label="Recipient’s username" aria-describedby="button-addon2">
+		<div class="input-group-append">
+			<button class="btn btn-outline-warning" type="button" id="button-addon2">Search</button>
+		</div>
+	</div>
+</form>
